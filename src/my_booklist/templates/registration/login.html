@@ -1,0 +1,50 @@
+{% extends "index.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block contents %}
+
+    <div class="container">
+        {% if form.errors %}
+        <p>登録されたユーザーネームとパスワードが一致しません。もう一度入力して下さい。</p>
+        {% endif %}
+
+        {% if next %}
+            {% if user.is_authenticated %}
+                <p>このページを閲覧する権限がありません。権限のあるアカウントでログインして下さい。</p>
+            {% else %}
+                <p>このページを表示するためにはログインが必要です。
+                    初めての方は、<a href="{% url 'accounts:signup' %}">こちら</a>から登録して下さい。</p>
+            {% endif %}
+        {% endif %}
+
+        <div class="common-form">
+            <h3>Login</h3>
+            <table class="table table-sm text-nowrap">
+                <form action="{% url 'login' %}" method="POST">
+                    {% csrf_token %}
+                    <tbody>
+                        <tr>
+                            <th>{{ form.username.label_tag }}</th>
+                            <td>{{ form.username }}</td>
+                        </tr>
+                        <tr>
+                            <th>{{ form.password.label_tag }}</th>
+                            <td>{{ form.password }}</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="submit" value="Login" class="btn btn-primary" role="button"/>
+                                <input type="hidden" name="next" value="{{ next }}" />
+                            </td>
+                            <td>
+                                <a class="btn btn-light" href="{% url 'password_reset' %}" role="button">PasswordReset</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </form>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,5 @@
+CREATE DATABASE IF NOT EXISTS booklist CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+CREATE USER IF NOT EXISTS 'booklist'@'%' IDENTIFIED BY 'booklistmaster';
+GRANT ALL PRIVILEGES ON booklist.* TO 'booklist'@'%';
+
+FLUSH PRIVILEGES;

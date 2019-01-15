@@ -1,0 +1,45 @@
+version: '3.4'
+
+volumes:
+  booklist.db.volume:
+    name: booklist.db.volume
+
+services:
+  nginx:
+    image: nginx:1.13
+    container_name: booklist.nginx
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d
+      - ./nginx/uwsgi_params:/etc/nginx/uwsgi_params
+      - ./static:/static
+    depends_on:
+      - web
+    restart: always
+
+  db:
+    image: mysql:5.7
+    container_name: booklist.db
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: booklistmaster
+      TZ: 'Asia/Tokyo'
+    volumes:
+      - booklist.db.volume:/var/lib/mysql
+      - ./sql:/docker-entrypoint-initdb.d
+    restart: always
+
+  web:
+    build: ./web
+    container_name: booklist.web
+    command: uwsgi --socket :8001 --module booklist.wsgi
+    volumes:
+      - ./src:/code
+      - ./static:/static
+    expose:
+      - "8001"
+    depends_on:
+      - db
+    restart: always
